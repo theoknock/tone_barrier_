@@ -1,24 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.16" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21208.1" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_0" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.12"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21191"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModuleProvider="" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" xcode11CocoaTouchSystemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <subviews>
+                            <imageView opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.25" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="waveform.path" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="Cet-hK-2QV" userLabel="Waveform Symbol">
+                                <rect key="frame" x="0.0" y="4.6666666666666856" width="390" height="845.33333333333337"/>
+                                <color key="tintColor" systemColor="linkColor"/>
+                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" weight="light"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Rav-Zl-4ee" userLabel="Play Pause Button">
+                                <rect key="frame" x="110.66666666666669" y="355" width="169" height="144"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain">
+                                    <imageReference key="image" image="play.circle" catalog="system" renderingMode="hierarchical">
+                                        <hierarchicalColors>
+                                            <color systemColor="linkColor"/>
+                                            <color red="0.035294117647058823" green="0.51764705882352946" blue="1" alpha="0.5" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <color white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </hierarchicalColors>
+                                    </imageReference>
+                                    <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="pointSize" pointSize="96" weight="medium"/>
+                                </buttonConfiguration>
+                                <connections>
+                                    <action selector="togglePlayPause:forEvent:" destination="BYZ-38-t0r" eventType="touchDown" id="w9f-dT-63S"/>
+                                </connections>
+                            </button>
+                            <view opaque="NO" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="Pbz-Dt-iq7" customClass="AVRoutePickerView">
+                                <rect key="frame" x="152.66666666666666" y="666" width="84.666666666666657" height="144"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="tintColor" systemColor="linkColor"/>
+                                <accessibility key="accessibilityConfiguration">
+                                    <accessibilityTraits key="traits" button="YES"/>
+                                </accessibility>
+                            </view>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="Rav-Zl-4ee" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="2gt-7r-vEd"/>
+                            <constraint firstItem="Cet-hK-2QV" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" id="2tf-4R-hIt"/>
+                            <constraint firstItem="Cet-hK-2QV" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="6A8-qK-ILM"/>
+                            <constraint firstItem="Pbz-Dt-iq7" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="Pka-4O-PLg"/>
+                            <constraint firstItem="Cet-hK-2QV" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="ZSt-qU-wXW"/>
+                            <constraint firstItem="Cet-hK-2QV" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="apv-ua-uJN"/>
+                            <constraint firstItem="Pbz-Dt-iq7" firstAttribute="height" secondItem="Rav-Zl-4ee" secondAttribute="height" id="bMd-Mb-fpl"/>
+                            <constraint firstItem="Pbz-Dt-iq7" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="fV9-KM-be6"/>
+                            <constraint firstItem="Rav-Zl-4ee" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="qfs-Yk-Hgv"/>
+                            <constraint firstItem="Pbz-Dt-iq7" firstAttribute="width" secondItem="Rav-Zl-4ee" secondAttribute="width" multiplier="0.5" id="ysW-MG-5FD"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="playPauseButton" destination="Rav-Zl-4ee" id="lDB-P7-xFK"/>
+                        <outlet property="routePickerView" destination="Pbz-Dt-iq7" id="efa-WY-SX0"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="140" y="-16"/>
         </scene>
     </scenes>
+    <color key="tintColor" systemColor="linkColor"/>
+    <resources>
+        <image name="play.circle" catalog="system" width="128" height="123"/>
+        <image name="waveform.path" catalog="system" width="128" height="113"/>
+        <systemColor name="linkColor">
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
 </document>
