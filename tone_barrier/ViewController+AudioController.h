@@ -13,6 +13,32 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+static AVAudioSourceNodeRenderBlock (^audio_renderer)(void) = ^ AVAudioSourceNodeRenderBlock {
+    __block Float32 theta = 0.f;
+    const Float32 frequency = 440.f;
+    const Float32 sampleRate = 48000.f;
+    const Float32 amplitude = 0.25f;
+    const Float32 M_PI_SQR = 2.f * M_PI;
+    
+    return ^OSStatus(BOOL * _Nonnull isSilence, const AudioTimeStamp * _Nonnull timestamp, AVAudioFrameCount frameCount, AudioBufferList * _Nonnull outputData) {
+                Float32 theta_increment = M_PI_SQR * frequency / sampleRate;
+                Float32 * buffer = (Float32 *)outputData->mBuffers[0].mData;
+                for (AVAudioFrameCount frame = 0; frame < frameCount; frame++)
+                {
+                    buffer[frame] = sin(theta) * amplitude;
+                    theta += theta_increment;
+                    !(theta > M_PI_SQR) ?: (theta -= M_PI_SQR);
+                }
+                return (OSStatus)noErr;
+            };
+};
+
+static AVAudioSourceNode * (^AudioSourceRef)(AVAudioSourceNodeRenderBlock) = ^ AVAudioSourceNode * (AVAudioSourceNodeRenderBlock audio_renderer) {
+    AVAudioSourceNode * source_node = [[AVAudioSourceNode alloc] initWithRenderBlock:audio_renderer];
+
+    return source_node;
+};
+
 static AVAudioSession * (^AudioSessionRef)(void) = ^ AVAudioSession * {
     AVAudioSession * session = [AVAudioSession sharedInstance];
     
@@ -44,34 +70,6 @@ static AVAudioSession * (^AudioSessionRef)(void) = ^ AVAudioSession * {
     return session;
 };
 
-//typedef Float32 * (^(^(^AudioRendererRef)(_Nullable AVAudioFormat *))(AVAudioSourceNodeRenderBlock))(void);
-
-static AVAudioSourceNodeRenderBlock (^audio_renderer)(void) = ^ AVAudioSourceNodeRenderBlock {
-    __block Float32 theta = 0.f;
-    const Float32 frequency = 440.f;
-    const Float32 sampleRate = 48000.f;
-    const Float32 amplitude = 0.25f;
-    const Float32 M_PI_SQR = 2.f * M_PI;
-    
-    return ^OSStatus(BOOL * _Nonnull isSilence, const AudioTimeStamp * _Nonnull timestamp, AVAudioFrameCount frameCount, AudioBufferList * _Nonnull outputData) {
-                Float32 theta_increment = M_PI_SQR * frequency / sampleRate;
-                Float32 * buffer = (Float32 *)outputData->mBuffers[0].mData;
-                for (AVAudioFrameCount frame = 0; frame < frameCount; frame++)
-                {
-                    buffer[frame] = sin(theta) * amplitude;
-                    theta += theta_increment;
-                    !(theta > M_PI_SQR) ?: (theta -= M_PI_SQR);
-                }
-                return (OSStatus)noErr;
-            };
-};
-
-static AVAudioSourceNode * (^AudioSourceRef)(AVAudioSourceNodeRenderBlock) = ^ AVAudioSourceNode * (AVAudioSourceNodeRenderBlock audio_renderer) {
-    AVAudioSourceNode * source_node = [[AVAudioSourceNode alloc] initWithRenderBlock:audio_renderer];
-
-    return source_node;
-};
-
 static AVAudioEngine * (^AudioEngineRef)(AVAudioSourceNode *) = ^(AVAudioSourceNode * audio_source) {
     AVAudioEngine * audio_engine = [[AVAudioEngine alloc] init];
     [audio_engine attachNode:audio_source];
@@ -79,6 +77,11 @@ static AVAudioEngine * (^AudioEngineRef)(AVAudioSourceNode *) = ^(AVAudioSourceN
     [audio_engine prepare];
     
     return audio_engine;
+};
+
+static bool (^toggle_audio_playback)(AVAudioEngine *, AVAudioSession *) = ^ bool (AVAudioEngine * audio_engine, AVAudioSession * audio_session) {
+    __block NSError * error = nil;
+    return ([audio_session setActive:(((![audio_engine isRunning]) && ^ BOOL { [audio_engine startAndReturnError:&error]; return (!error) ? ([audio_engine isRunning]) : FALSE; }()) || ^ BOOL { [audio_engine stop]; return ([audio_engine isRunning]); }()) error:&error]) & [audio_engine isRunning];
 };
 
 @interface ViewController ()
