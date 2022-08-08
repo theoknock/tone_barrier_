@@ -79,9 +79,17 @@ static AVAudioEngine * (^AudioEngineRef)(AVAudioSourceNode *) = ^(AVAudioSourceN
     return audio_engine;
 };
 
-static bool (^toggle_audio_playback)(AVAudioEngine *, AVAudioSession *) = ^ bool (AVAudioEngine * audio_engine, AVAudioSession * audio_session) {
-    __block NSError * error = nil;
-    return ([audio_session setActive:(((![audio_engine isRunning]) && ^ BOOL { [audio_engine startAndReturnError:&error]; return (!error) ? ([audio_engine isRunning]) : FALSE; }()) || ^ BOOL { [audio_engine stop]; return ([audio_engine isRunning]); }()) error:&error]) & [audio_engine isRunning];
+static bool (^(^toggle_audio_playback)(AVAudioEngine *, AVAudioSession *))(void) = ^ (AVAudioEngine * audio_engine, AVAudioSession * audio_session) {
+    return ^ bool {
+        __block NSError * error = nil;
+        return ([audio_session setActive:(((![audio_engine isRunning]) && ^ BOOL { [audio_engine startAndReturnError:&error]; return (!error) ? ([audio_engine isRunning]) : FALSE; }()) || ^ BOOL { [audio_engine stop]; return ([audio_engine isRunning]); }()) error:&error]) & [audio_engine isRunning];
+    };
+};
+
+static void (^(^playback_interface)(UIButton *))(bool(^)(void)) = ^ (UIButton * playback_button) {
+    return ^ (bool(^update_playback_interface)(void)) {
+        [playback_button setSelected:update_playback_interface()];
+    };
 };
 
 @interface ViewController ()
