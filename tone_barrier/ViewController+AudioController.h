@@ -151,12 +151,27 @@ static AVAudioEngine * (^AudioEngineRef)(AVAudioSourceNode *) = ^(AVAudioSourceN
     return audio_engine;
 };
 
+typedef typeof(bool(^(^)(AVAudioEngine *, AVAudioSession *))(void)) audio_state_ref;
+audio_state_ref audio_state = ^ (AVAudioEngine * audio_engine, AVAudioSession * audio_session) {
+    __block NSError * error = nil;
+    return ^ bool {
+        return ([audio_session setActive:(((![audio_engine isRunning]) && ^ BOOL { [audio_engine startAndReturnError:&error]; return (!error) ? ([audio_engine isRunning]) : FALSE; }()) || ^ BOOL { [audio_engine stop]; return ([audio_engine isRunning]); }()) error:&error]) & [audio_engine isRunning];
+    };
+};
+typedef typeof(void(^)(audio_state_ref, ...)) audio_control_ref;
+
+
 typedef bool (^toggle_audio_state)(void);
 typedef toggle_audio_state (^alloc_audio_state)(void);
 static alloc_audio_state (^init_audio_state)(AVAudioEngine *, AVAudioSession *, ...) = ^ (AVAudioEngine * audio_engine, AVAudioSession * audio_session, ...) {
+    va_list argp;
+    va_start(argp, audio_session);
+    MPNowPlayingInfoCenter * nowPlayingInfoCenter = va_arg(argp, MPNowPlayingInfoCenter *);
+    MPRemoteCommandCenter  * remoteCommandCenter  = va_arg(argp, MPRemoteCommandCenter  *);
     return ^{
         return ^ bool {
-            return TRUE;
+            __block NSError * error = nil;
+            return ([audio_session setActive:(((![audio_engine isRunning]) && ^ BOOL { [audio_engine startAndReturnError:&error]; return (!error) ? ([audio_engine isRunning]) : FALSE; }()) || ^ BOOL { [audio_engine stop]; return ([audio_engine isRunning]); }()) error:&error]) & [audio_engine isRunning];
         };
     };
 };
@@ -168,37 +183,6 @@ static alloc_audio_control (^init_audio_control)(toggle_audio_state, ...) = ^ (t
     return ^{
         return ^ bool {
             return TRUE;
-        };
-    };
-};
-
-return ^ {
-    return ^ audio_state {
-        __block NSError * error = nil;
-                return ([audio_session setActive:(((![audio_engine isRunning]) && ^ BOOL { [audio_engine startAndReturnError:&error]; return (!error) ? ([audio_engine isRunning]) : FALSE; }()) || ^ BOOL { [audio_engine stop]; return ([audio_engine isRunning]); }()) error:&error]) & [audio_engine isRunning];
-            };
-        };
-    };
-//static audio_control (^audio_control_button)()
-
-//^ (id(^audio_control_ref)(void)) {
-//        id audio_control_t = audio_control_ref();
-//        return ^ (audio_state state) {
-//            (*audio_control_t)(state);
-//        };
-//    };
-//
-//};
-
-
-
-
-static setup_audio_state (^audio_state_setup)(AVAudioEngine *, AVAudioSession *) = ^ setup_audio_state (AVAudioEngine * audio_engine, AVAudioSession * audio_session) {
-    return ^ {
-        return ^ audio_state {
-                __block NSError * error = nil;
-                return ([audio_session setActive:(((![audio_engine isRunning]) && ^ BOOL { [audio_engine startAndReturnError:&error]; return (!error) ? ([audio_engine isRunning]) : FALSE; }()) || ^ BOOL { [audio_engine stop]; return ([audio_engine isRunning]); }()) error:&error]) & [audio_engine isRunning];
-            };
         };
     };
 };
