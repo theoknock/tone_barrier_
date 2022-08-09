@@ -151,40 +151,49 @@ static AVAudioEngine * (^AudioEngineRef)(AVAudioSourceNode *) = ^(AVAudioSourceN
     return audio_engine;
 };
 
-typedef typeof(bool(^(^)(AVAudioEngine *, AVAudioSession *))(void)) audio_state_ref;
-audio_state_ref audio_state = ^ (AVAudioEngine * audio_engine, AVAudioSession * audio_session) {
+typedef typeof(bool(^)(void)) audio_state;
+typedef typeof(audio_state(^)(AVAudioEngine *, AVAudioSession *)) audio_state_ref;
+audio_state_ref audio_state_ref_init = ^ (AVAudioEngine * audio_engine, AVAudioSession * audio_session) {
     __block NSError * error = nil;
     return ^ bool {
         return ([audio_session setActive:(((![audio_engine isRunning]) && ^ BOOL { [audio_engine startAndReturnError:&error]; return (!error) ? ([audio_engine isRunning]) : FALSE; }()) || ^ BOOL { [audio_engine stop]; return ([audio_engine isRunning]); }()) error:&error]) & [audio_engine isRunning];
     };
 };
-typedef typeof(void(^)(audio_state_ref, ...)) audio_control_ref;
 
-
-typedef bool (^toggle_audio_state)(void);
-typedef toggle_audio_state (^alloc_audio_state)(void);
-static alloc_audio_state (^init_audio_state)(AVAudioEngine *, AVAudioSession *, ...) = ^ (AVAudioEngine * audio_engine, AVAudioSession * audio_session, ...) {
-    va_list argp;
-    va_start(argp, audio_session);
-    MPNowPlayingInfoCenter * nowPlayingInfoCenter = va_arg(argp, MPNowPlayingInfoCenter *);
-    MPRemoteCommandCenter  * remoteCommandCenter  = va_arg(argp, MPRemoteCommandCenter  *);
-    return ^{
-        return ^ bool {
-            __block NSError * error = nil;
-            return ([audio_session setActive:(((![audio_engine isRunning]) && ^ BOOL { [audio_engine startAndReturnError:&error]; return (!error) ? ([audio_engine isRunning]) : FALSE; }()) || ^ BOOL { [audio_engine stop]; return ([audio_engine isRunning]); }()) error:&error]) & [audio_engine isRunning];
-        };
-    };
+typedef typeof(void(^)(audio_state, ...)) audio_control;
+audio_control play_pause_button_audio_control = ^ (audio_state audio_state_play_pause_button, ...) {
+    
 };
 
-typedef bool (^toggle_audio_control)(void);
-typedef toggle_audio_control (^audio_control)(void);
-typedef audio_control (^alloc_audio_control)(void);
-static alloc_audio_control (^init_audio_control)(toggle_audio_state, ...) = ^ (toggle_audio_state control_toggle, ...) {
-    return ^{
-        return ^ bool {
-            return TRUE;
-        };
+audio_control_ref lock_screen_audio_control = ^ (audio_state_ref * audio_state_t, ...) {
+    va_list argp;
+    va_start(argp, audio_state_t);
+    MPNowPlayingInfoCenter * nowPlayingInfoCenter = va_arg(argp, MPNowPlayingInfoCenter *);
+    MPRemoteCommandCenter  * remoteCommandCenter  = va_arg(argp, MPRemoteCommandCenter  *);
+    
+    NSMutableDictionary<NSString *, id> * nowPlayingInfo = [[NSMutableDictionary alloc] initWithCapacity:2];
+    [nowPlayingInfo setObject:@"ToneBarrier" forKey:MPMediaItemPropertyTitle];
+    [nowPlayingInfo setObject:(NSString *)@"James Alan Bush" forKey:MPMediaItemPropertyArtist];
+    [nowPlayingInfo setObject:(NSString *)@"The Life of a Demoniac" forKey:MPMediaItemPropertyAlbumTitle];
+    
+    static UIImage * image;
+    MPMediaItemArtwork *artwork = [[MPMediaItemArtwork alloc] initWithImage:(image = [UIImage imageNamed:@"WaveIcon"])];
+    [nowPlayingInfo setObject:(MPMediaItemArtwork *)artwork forKey:MPMediaItemPropertyArtwork];
+    
+    [(nowPlayingInfoCenter = [MPNowPlayingInfoCenter defaultCenter]) setNowPlayingInfo:(NSDictionary<NSString *,id> * _Nullable)nowPlayingInfo];
+    
+    MPRemoteCommandHandlerStatus (^remote_command_handler)(MPRemoteCommandEvent * _Nonnull) = ^ MPRemoteCommandHandlerStatus (MPRemoteCommandEvent * _Nonnull event) {
+        __block NSError * error = nil;
+        [nowPlayingInfoCenter setPlaybackState:(*audio_state_t)()];
+        return (!error) ? MPRemoteCommandHandlerStatusSuccess : MPRemoteCommandHandlerStatusCommandFailed;
     };
+    
+    [[(remoteCommandCenter = [MPRemoteCommandCenter sharedCommandCenter]) playCommand] addTargetWithHandler:remote_command_handler];
+    [[remoteCommandCenter stopCommand] addTargetWithHandler:remote_command_handler];
+    [[remoteCommandCenter pauseCommand] addTargetWithHandler:remote_command_handler];
+    [[remoteCommandCenter togglePlayPauseCommand] addTargetWithHandler:remote_command_handler];
+    
+    [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
 };
 
 static void (^(^(^update_audio_controls)(MPNowPlayingInfoCenter *, MPRemoteCommandCenter *))(UIButton *))(bool(^)(void)) = ^ (MPNowPlayingInfoCenter * now_playing_info_center, MPRemoteCommandCenter * remote_command_center) {
