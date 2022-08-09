@@ -8,6 +8,11 @@
 #import "ViewController.h"
 #import "ViewController+AudioController.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+
+
 @interface ViewController ()
 
 @end
@@ -86,15 +91,24 @@ static unsigned long (^(^(^(^iterator_)(const unsigned long))(id(^)(void)))(void
     }((id *)&retained_objects_ref);
 };
 
+static void (^(^(^notification_observer)(NSNotificationCenter *))(NSNotification *, typeof(void(^)(NSNotification *)))(void)) = ^ (NSNotificationCenter * notification_center) {
+    return ^ (NSNotification * observed_notification, typeof(void(^)(NSNotification *))notification_handler) {
+        return ^{
+            [notification_center addObserverForName:observed_notification.name object:observed_notification.object queue:[NSOperationQueue mainQueue] usingBlock:notification_handler];
+        };
+    };
+};
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     stride = generator(0.f, 1.f, 10);
     printf("stride = %f\n", stride());
     printf("stride = %f\n", stride());
+
     
-    AudioEngineRef(AudioSourceRef(audio_renderer()));
     
+    (AudioEngineRef(AudioSourceRef(AudioRendererRef)), AudioSessionRef());
 }
 
 
