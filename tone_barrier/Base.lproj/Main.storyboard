@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21208.1" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
-    <device id="retina6_0" orientation="portrait" appearance="light"/>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21223" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="ipad12_9rounded" orientation="landscape" layout="fullscreen" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21191"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21204"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -14,16 +14,16 @@
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1366" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.25" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="waveform.path" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="Cet-hK-2QV" userLabel="Waveform Symbol">
-                                <rect key="frame" x="0.0" y="4.6666666666666856" width="390" height="845.33333333333337"/>
+                                <rect key="frame" x="0.0" y="1" width="1366" height="1026"/>
                                 <color key="tintColor" systemColor="linkColor"/>
                                 <preferredSymbolConfiguration key="preferredSymbolConfiguration" weight="light"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Rav-Zl-4ee" userLabel="Play Pause Button">
-                                <rect key="frame" x="110.66666666666669" y="355" width="169" height="144"/>
+                                <rect key="frame" x="598" y="441" width="170" height="146"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain">
                                     <imageReference key="image" image="play.circle" catalog="system" renderingMode="hierarchical">
@@ -35,12 +35,9 @@
                                     </imageReference>
                                     <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="pointSize" pointSize="96" weight="medium"/>
                                 </buttonConfiguration>
-                                <connections>
-                                    <action selector="togglePlayPause:forEvent:" destination="BYZ-38-t0r" eventType="touchDown" id="w9f-dT-63S"/>
-                                </connections>
                             </button>
                             <view opaque="NO" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="Pbz-Dt-iq7" customClass="AVRoutePickerView">
-                                <rect key="frame" x="152.66666666666666" y="666" width="84.666666666666657" height="144"/>
+                                <rect key="frame" x="640.5" y="858" width="85" height="146"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <color key="tintColor" systemColor="linkColor"/>
                                 <accessibility key="accessibilityConfiguration">
@@ -64,8 +61,8 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="playPauseButton" destination="Rav-Zl-4ee" id="lDB-P7-xFK"/>
-                        <outlet property="routePickerView" destination="Pbz-Dt-iq7" id="efa-WY-SX0"/>
+                        <outlet property="playPauseButton" destination="Rav-Zl-4ee" id="AJe-84-AXY"/>
+                        <outlet property="routePickerView" destination="Pbz-Dt-iq7" id="kAh-v6-rYU"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

@@ -8,6 +8,8 @@
 #import "ViewController.h"
 #import "ViewController+AudioController.h"
 
+#import <objc/runtime.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -30,74 +32,61 @@ static const float (^(^generator)(const float, const float, const int))(void) = 
     };
 };
 
-id (^retainable_object_)(id(^)(void)) = ^ id (id(^object)(void)) {
-    return ^{
-        return object();
-    };
-};
-
-id (^(^retain_object_)(id(^)(void)))(void) = ^ (id(^retainable_object)(void)) {
-    id retained_object = retainable_object();
-    return ^ id {
-        return retained_object;
-    };
-};
-
-// [(NSNumber *)(object()) unsignedLongValue];
-
-//unsigned long (^(^recursion)(unsigned long))(id(^)(void)) = ^ (const unsigned long object_count) {
-//    return ^ (id(^object)(void)) {
-//
+//static void (^(^(^notification_observer)(NSNotificationCenter *))(NSNotification *, typeof(void(^)(NSNotification *)))(void)) = ^ (NSNotificationCenter * notification_center) {
+//    return ^ (NSNotification * observed_notification, typeof(void(^)(NSNotification *))notification_handler) {
+//        return ^{
+//            [notification_center addObserverForName:observed_notification.name object:observed_notification.object queue:[NSOperationQueue mainQueue] usingBlock:notification_handler];
+//        };
 //    };
 //};
 
+//typedef typeof(unsigned long (^)(unsigned long)) iterator;
+//typedef typeof(void(^__strong)(bool)) mapper;
+//typedef typeof(void(^__strong)(bool)) applier;
+//static void (^(^(^iterate_)(const unsigned long))(typeof(mapper)))(void) = ^ (const unsigned long iterations) {
+//    CFTypeRef obj_collection[iterations];
+//    return ^ (CFTypeRef obj_collection_t) {
+//        __block iterator integrand;
+//        return ^ (mapper map) {
+//            (integrand = ^ unsigned long (unsigned long index) {
+//                --index;
+//                *((CFTypeRef *)obj_collection_t + index) = CFBridgingRetain((id _Nullable)(map));
+//                ((__bridge void(^__strong)(bool))(*((CFTypeRef *)obj_collection_t + index)))(TRUE);
+//                return (unsigned long)(index ^ 0UL) && (unsigned long)(integrand)(index);
+//            })(iterations);
+//            return ^{
+//                (integrand = ^ unsigned long (unsigned long index) {
+//                    --index;
+//                    ((__bridge void(^__strong)(bool))(*((CFTypeRef *)obj_collection_t + index)))(TRUE);
+//                    return (unsigned long)(index ^ 0UL) && (unsigned long)(integrand)(index);
+//                })(iterations);
+//            };
+//        };
+//    }(&obj_collection);
+//};
 
-typedef typeof(unsigned long(^)(id(^object)(void))) asdf;
 
-// second_iterator = iterator(5)(object)
-// second_iterator(^ (id object) { });
-
-static unsigned long (^(^(^(^iterator_)(const unsigned long))(id(^)(void)))(void(^)(id(^)(void))))(bool(^)(id(^)(void))) = ^ (const unsigned long object_count) {
-    typeof(id(^)(void)) retained_objects_ref;
-    return ^ (id * retained_objects_t) {
-        static typeof(unsigned long(^)(unsigned long)) recursive_iterator_;
-        
-        return ^ (id(^write_object)(void)) {
-            recursive_iterator_ = ^ unsigned long (unsigned long index) {
-                (*((id * const)retained_objects_t + index) = retain_object_(retainable_object_(write_object)));
-                return ((index) >> 1UL) && (recursive_iterator_)((index) >> 1UL);
-            }; recursive_iterator_((1UL << object_count) >> 1UL); // -~n
-            
-            return ^ (void(^read_object)(id(^)(void))) {
-                recursive_iterator_ = ^ unsigned long (unsigned long index) {
-                    read_object((*((id * const)retained_objects_t + index)));
-                    return ((index) >> 1UL) && (recursive_iterator_)((index) >> 1UL);
-                }; recursive_iterator_((1UL << object_count) >> 1UL);
-                
-                typeof(id(^)(void)) reduced_objects_ref;
-                return  ^ (id * reduced_objects_t) {
-                    return ^ (bool(^object_test)(id(^)(void))) {
-                        recursive_iterator_ = ^ unsigned long (unsigned long index) {
-                            id(^test_object)(void) = (*((id * const)retained_objects_t + index));
-                            (!(object_test(test_object))) ?: ^{ (*((id * const)reduced_objects_t + index) = test_object); }();
-                            return ((index) >> 1UL) && (recursive_iterator_)((index) >> 1UL);
-                        }; recursive_iterator_((1UL << object_count) >> 1UL);
-                        
-                        return 1UL;
-                    };
-                }((id *)&reduced_objects_ref);
-            };
-        };
-    }((id *)&retained_objects_ref);
-};
-
-static void (^(^(^notification_observer)(NSNotificationCenter *))(NSNotification *, typeof(void(^)(NSNotification *)))(void)) = ^ (NSNotificationCenter * notification_center) {
-    return ^ (NSNotification * observed_notification, typeof(void(^)(NSNotification *))notification_handler) {
-        return ^{
-            [notification_center addObserverForName:observed_notification.name object:observed_notification.object queue:[NSOperationQueue mainQueue] usingBlock:notification_handler];
-        };
-    };
-};
+//typedef typeof(unsigned long (^)(unsigned long)) iterator;
+//typedef typeof(void(^__strong)(bool)) mapper;
+//typedef typeof(void(^__strong)(bool)) applier;
+//static void (^(^(^iterate_)(const unsigned long))(typeof(void(^__strong)(bool))))(void) = ^ (const unsigned long iterations) {
+//    const id * obj_collection[iterations];
+//    return ^ (const id ** obj_collection_t) {
+//        __block iterator integrand;
+//        return ^ (void(^map)(bool)) {
+//            (integrand = ^ unsigned long (unsigned long index) {
+//                --index;
+//                *(obj_collection_t + index) = (const id *)&map;
+//                ((void(^)(bool))(*(*(obj_collection_t + index))))(TRUE);
+//                //                ((void(^)(bool))(*((id *)obj_collection_t + index)))(TRUE);
+//                return (unsigned long)(index ^ 0UL) && (unsigned long)(integrand)(index);
+//            })(iterations);
+//            return ^{
+//                ((void(^)(bool))(*(*(obj_collection_t + 0UL))))(TRUE);
+//            };
+//        };
+//    }(&obj_collection[0]);
+//};
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -105,16 +94,19 @@ static void (^(^(^notification_observer)(NSNotificationCenter *))(NSNotification
     stride = generator(0.f, 1.f, 10);
     printf("stride = %f\n", stride());
     printf("stride = %f\n", stride());
-
     
+    //    iterate_(1)(^ (bool state) {
+    //        printf("iterate_+state == %s", (state) ? "TRUE" : "FALSE");
+    //    })();
     
-    (AudioEngineRef(AudioSourceRef(AudioRendererRef)), AudioSessionRef());
+    void (^state)(bool) = ^ (bool state) {
+        printf("state == %s\n", (state) ? "TRUE" : "FALSE");
+    };
+    void (^ const * state_t)(bool) = &state;
+    void (^toggle_play_pause_button)(void) = audio_controller(audio_state_ref_init(audio_engine(audio_source(audio_renderer())), audio_session()))(1)(state);
+    
+    objc_setAssociatedObject(self.playPauseButton, @selector(invoke), toggle_play_pause_button, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [self.playPauseButton addTarget:toggle_play_pause_button action:@selector(invoke) forControlEvents:UIControlEventTouchDown];
 }
-
-
-//static AVAudioSession * (^audio_session)(void);
-//static AVAudioSourceNodeRenderBlock (^audio_renderer)(void);
-//static AVAudioSourceNode * (^audio_source)(AVAudioSourceNodeRenderBlock);
-//static AVAudioEngine * (^audio_engine)(AVAudioSourceNode *);
 
 @end
