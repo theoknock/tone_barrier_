@@ -141,7 +141,6 @@ static AVAudioSession * (^audio_session)(void) = ^ AVAudioSession * {
         });
 
         observe_notifications(@[observe_audio_session_interruption_notification, observe_audio_route_change_notification]);
-        
     }
     
     return session;
@@ -164,58 +163,6 @@ audio_state_ref audio_state_ref_init = ^ (AVAudioEngine * audio_engine, AVAudioS
         return ([audio_session setActive:(((![audio_engine isRunning]) && ^ BOOL { [audio_engine startAndReturnError:&error]; return (!error) ? ([audio_engine isRunning]) : FALSE; }()) || ^ BOOL { [audio_engine stop]; return ([audio_engine isRunning]); }()) error:&error]) & [audio_engine isRunning];
     };
 };
-
-typedef typeof(void(^)(audio_state, ...)) audio_control;
-audio_control play_pause_button_audio_control = ^ (audio_state audio_state_play_pause_button, ...) {
-    
-};
-
-audio_control lock_screen_audio_control = ^ (audio_state lock_screen_play_pause_button, ...) {
-    va_list argp;
-    va_start(argp, lock_screen_play_pause_button);
-    MPNowPlayingInfoCenter * nowPlayingInfoCenter = va_arg(argp, MPNowPlayingInfoCenter *);
-    MPRemoteCommandCenter  * remoteCommandCenter  = va_arg(argp, MPRemoteCommandCenter  *);
-
-    NSMutableDictionary<NSString *, id> * nowPlayingInfo = [[NSMutableDictionary alloc] initWithCapacity:2];
-    [nowPlayingInfo setObject:@"ToneBarrier" forKey:MPMediaItemPropertyTitle];
-    [nowPlayingInfo setObject:(NSString *)@"James Alan Bush" forKey:MPMediaItemPropertyArtist];
-    [nowPlayingInfo setObject:(NSString *)@"The Life of a Demoniac" forKey:MPMediaItemPropertyAlbumTitle];
-    
-    static UIImage * image;
-    MPMediaItemArtwork *artwork = [[MPMediaItemArtwork alloc] initWithImage:(image = [UIImage imageNamed:@"WaveIcon"])];
-    [nowPlayingInfo setObject:(MPMediaItemArtwork *)artwork forKey:MPMediaItemPropertyArtwork];
-
-    [(nowPlayingInfoCenter = [MPNowPlayingInfoCenter defaultCenter]) setNowPlayingInfo:(NSDictionary<NSString *,id> * _Nullable)nowPlayingInfo];
-
-    MPRemoteCommandHandlerStatus (^remote_command_handler)(MPRemoteCommandEvent * _Nonnull) = ^ MPRemoteCommandHandlerStatus (MPRemoteCommandEvent * _Nonnull event) {
-        __block NSError * error = nil;
-//        [nowPlayingInfoCenter setPlaybackState:/* toggle_play_pause_block */];
-        return (!error) ? MPRemoteCommandHandlerStatusSuccess : MPRemoteCommandHandlerStatusCommandFailed;
-    };
-
-    [[(remoteCommandCenter = [MPRemoteCommandCenter sharedCommandCenter]) playCommand] addTargetWithHandler:remote_command_handler];
-    [[remoteCommandCenter stopCommand] addTargetWithHandler:remote_command_handler];
-    [[remoteCommandCenter pauseCommand] addTargetWithHandler:remote_command_handler];
-    [[remoteCommandCenter togglePlayPauseCommand] addTargetWithHandler:remote_command_handler];
-
-    [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
-};
-
-static void (^(^(^update_audio_controls)(MPNowPlayingInfoCenter *, MPRemoteCommandCenter *))(UIButton *))(bool(^)(void)) = ^ (MPNowPlayingInfoCenter * now_playing_info_center, MPRemoteCommandCenter * remote_command_center) {
-    return ^ (UIButton * playback_button) {
-        return ^ (bool(^audio_state)(void)) {
-        };
-    };
-};
-//
-//    return ^ (bool(^update_playback_interface)(void)) {
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            [playback_button setSelected:update_playback_interface()];
-//        });
-//    };
-//};
-
-
 
 typedef CFTypeRef _Nonnull (^stored_object)(void);
 stored_object (^ _Nonnull store_object)(CFTypeRef) = ^ (CFTypeRef storable_object) {
@@ -247,6 +194,44 @@ static void (^(^(^(^audio_controller)(audio_state))(unsigned long))(CFTypeRef(^)
         }(objects_ptr);
     };
 };
+
+typedef const bool (^ __strong object_block)(const bool);
+object_block object_blk = ^ bool (const bool b) {
+    printf("object_blk state == %s\n", (b) ? "TRUE" : "FALSE");
+    return b;
+};
+object_block object_blk_2 = ^ bool (const bool b) {
+    printf("object_blk_2 state == %s\n", (b) ? "TRUE" : "FALSE");
+    return b;
+};
+object_block object_blk_3 = ^ bool (const bool b) {
+    printf("object_blk_3 state == %s\n", (b) ? "TRUE" : "FALSE");
+    return b;
+};
+
+object_block (^object_blk_composition)(object_block, object_block) = ^ (object_block object_blk_a, object_block object_blk_b) {
+    return ^ bool (const bool b) {
+        return object_blk_b(object_blk_a(b));
+    };
+};
+
+typedef const typeof(object_block * restrict) retained_object;
+
+typedef typeof(const bool (^ __strong)(const bool)) audio_control_state;
+typedef typeof(const bool(^ __strong)(void)) toggle_audio_control;
+typedef typeof(toggle_audio_control(^)(audio_control_state, ...)) audio_control;
+static bool (^(^(^audio_controller_)(const _Nonnull audio_state))(object_block))(void) = ^ (const audio_state _Nonnull state) {
+    static object_block object_composition = ^ bool (bool cond) { return cond; };
+    static retained_object object_composition_t = &object_composition;
+    return ^ (object_block object) {
+        *object_composition_t = object_blk_composition(object, *object_composition_t);
+        return ^ bool {
+            return (*object_composition_t)(state());
+        };
+    };
+};
+static bool (^ _Nonnull (^ _Nonnull (^ _Nonnull const (* _Nonnull restrict audio_controller_t))(const _Nonnull audio_state))(object_block))(void) = &audio_controller_;
+
 
 // ------------------------------------------------------------------
 

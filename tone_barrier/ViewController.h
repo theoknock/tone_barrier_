@@ -20,6 +20,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak, nonatomic) IBOutlet UIButton *playPauseButton;
 @property (weak, nonatomic) IBOutlet AVRoutePickerView *routePickerView;
 
+@property (strong, nonatomic) MPNowPlayingInfoCenter * nowPlayingInfoCenter;
+@property (strong, nonatomic) MPRemoteCommandCenter  * remoteCommandCenter;
+
+
 @end
 
 NS_ASSUME_NONNULL_END
