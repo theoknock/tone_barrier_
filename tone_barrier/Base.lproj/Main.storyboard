@@ -18,22 +18,23 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view opaque="NO" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="Pbz-Dt-iq7" customClass="AVRoutePickerView">
-                                <rect key="frame" x="640.5" y="858" width="85" height="146"/>
+                                <rect key="frame" x="641.5" y="890" width="83" height="114"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <color key="tintColor" systemColor="linkColor"/>
                                 <accessibility key="accessibilityConfiguration">
                                     <accessibilityTraits key="traits" button="YES"/>
                                 </accessibility>
                             </view>
-                            <imageView opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.25" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="waveform.path" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="Cet-hK-2QV" userLabel="Waveform Symbol">
+                            <imageView opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.14999999999999999" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="waveform.path" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="Cet-hK-2QV" userLabel="Waveform Symbol">
                                 <rect key="frame" x="0.0" y="1" width="1366" height="1026"/>
                                 <color key="tintColor" systemColor="linkColor"/>
                                 <preferredSymbolConfiguration key="preferredSymbolConfiguration" weight="light"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" adjustsImageWhenHighlighted="NO" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Rav-Zl-4ee" userLabel="Play Pause Button">
-                                <rect key="frame" x="598" y="441" width="170" height="146"/>
+                                <rect key="frame" x="600" y="443" width="166.5" height="142.5"/>
                                 <accessibility key="accessibilityConfiguration">
                                     <accessibilityTraits key="traits" button="YES" playsSound="YES" updatesFrequently="YES" startsMediaSession="YES"/>
+                                    <bool key="isElement" value="NO"/>
                                 </accessibility>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain">
@@ -42,7 +43,7 @@
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <color key="strokeColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </backgroundConfiguration>
-                                    <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="pointSize" pointSize="96" weight="medium"/>
+                                    <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="pointSize" pointSize="96" weight="light"/>
                                 </buttonConfiguration>
                             </button>
                         </subviews>
@@ -55,7 +56,7 @@
                             <constraint firstItem="Pbz-Dt-iq7" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="Pka-4O-PLg"/>
                             <constraint firstItem="Cet-hK-2QV" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="ZSt-qU-wXW"/>
                             <constraint firstItem="Cet-hK-2QV" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="apv-ua-uJN"/>
-                            <constraint firstItem="Pbz-Dt-iq7" firstAttribute="height" secondItem="Rav-Zl-4ee" secondAttribute="height" id="bMd-Mb-fpl"/>
+                            <constraint firstItem="Pbz-Dt-iq7" firstAttribute="height" secondItem="Rav-Zl-4ee" secondAttribute="height" multiplier="0.8" id="bMd-Mb-fpl"/>
                             <constraint firstItem="Pbz-Dt-iq7" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="fV9-KM-be6"/>
                             <constraint firstItem="Rav-Zl-4ee" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="qfs-Yk-Hgv"/>
                             <constraint firstItem="Pbz-Dt-iq7" firstAttribute="width" secondItem="Rav-Zl-4ee" secondAttribute="width" multiplier="0.5" id="ysW-MG-5FD"/>

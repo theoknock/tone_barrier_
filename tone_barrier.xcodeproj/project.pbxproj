@@ -25,6 +25,7 @@
 		B941A3AC28A026D5005533D1 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		B941A3AD28A026D6005533D1 /* AVRouting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVRouting.framework; path = System/Library/Frameworks/AVRouting.framework; sourceTree = SDKROOT; };
 		B941A3AE28A026D6005533D1 /* AVFAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFAudio.framework; path = System/Library/Frameworks/AVFAudio.framework; sourceTree = SDKROOT; };
+		B986F54928BBF94A00922709 /* CodeCemetary.md */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; path = CodeCemetary.md; sourceTree = "<group>"; };
 		B9F1065D289A1501007BC7F7 /* tone_barrier.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tone_barrier.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B9F10660289A1501007BC7F7 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		B9F10661289A1501007BC7F7 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -98,6 +99,7 @@
 				B9F1066C289A1501007BC7F7 /* Assets.xcassets */,
 				B9F10671289A1501007BC7F7 /* Info.plist */,
 				B9F10672289A1501007BC7F7 /* main.m */,
+				B986F54928BBF94A00922709 /* CodeCemetary.md */,
 			);
 			path = tone_barrier;
 			sourceTree = "<group>";
