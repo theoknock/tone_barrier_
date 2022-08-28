@@ -10,33 +10,34 @@
 //
 
 #import "ViewController.h"
+@import Accelerate;
 
 
 NS_ASSUME_NONNULL_BEGIN
 
 static AVAudioSourceNodeRenderBlock (^audio_renderer)(void) = ^ AVAudioSourceNodeRenderBlock {
-    __block Float32 theta = 0.f;
     const Float32 frequency = 440.f;
     const Float32 sampleRate = 48000.f;
     const Float32 amplitude = 0.25f;
     const Float32 M_PI_SQR = 2.f * M_PI;
     
     return ^OSStatus(BOOL * _Nonnull isSilence, const AudioTimeStamp * _Nonnull timestamp, AVAudioFrameCount frameCount, AudioBufferList * _Nonnull outputData) {
-                Float32 theta_increment = M_PI_SQR * frequency / sampleRate;
-                Float32 * buffer = (Float32 *)outputData->mBuffers[0].mData;
-                for (AVAudioFrameCount frame = 0; frame < frameCount; frame++)
-                {
-                    buffer[frame] = sin(theta) * amplitude;
-                    theta += theta_increment;
-                    !(theta > M_PI_SQR) ?: (theta -= M_PI_SQR);
-                }
-                return (OSStatus)noErr;
-            };
+        Float32 theta_increment = M_PI_SQR * frequency / sampleRate;
+        Float32 * buffer = (Float32 *)outputData->mBuffers[0].mData;
+        
+        for (AVAudioFrameCount frame = 0; frame < frameCount; frame++)
+            *(buffer + frame) = sin(^ (Float32 * theta_increment_t) {
+                static Float32 theta;
+                !((theta += *theta_increment_t) > M_PI_SQR) ?: (theta -= M_PI_SQR);
+                return theta;
+            }(&theta_increment)) * amplitude;
+        
+        return (OSStatus)noErr;
+    };
 };
 
 static AVAudioSourceNode * (^audio_source)(AVAudioSourceNodeRenderBlock) = ^ AVAudioSourceNode * (AVAudioSourceNodeRenderBlock audio_renderer) {
     AVAudioSourceNode * source_node = [[AVAudioSourceNode alloc] initWithRenderBlock:audio_renderer];
-
     return source_node;
 };
 

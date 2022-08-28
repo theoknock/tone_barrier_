@@ -227,3 +227,32 @@ static void (^(^(^objects_iterator)(const _Nonnull audio_state))(const unsigned 
     object_array(object_blk_2);
     object_array(object_blk_3);
     
+// ---------------
+
+typedef typeof(const int(^)(void)) generator;
+typedef typeof(unsigned long(^)(unsigned long)) recursive_block_wrapper;
+typedef typeof(void(^)(const int)) recursive_block_auxillary;
+static void (^(^iterator)(const int, const int, const int))(void(^)(const int)) = ^ (const int start, const int stride, const int length) {
+    static int result;
+    result = start;
+    static int end;
+    end = start + (stride * length);
+    const int iterations = (const int)(round(length / stride));
+    
+    __block recursive_block_wrapper wrapper_block;
+    return ^ (recursive_block_auxillary auxillary_block) {
+        (wrapper_block = ^ unsigned long (unsigned long index) {
+            auxillary_block((result = ((result += stride) < end) ? result : start));
+            return (unsigned long)(index ^ 0UL) && (unsigned long)wrapper_block(~-index);
+        })(iterations);
+    };
+};
+
+        /*
+        iterator(0, 1, frameCount)(^ (const int frame) {
+            *(buffer + frame) = sin(theta) * amplitude;
+            theta += theta_increment;
+            !(theta > M_PI_SQR) ?: (theta -= M_PI_SQR);
+        });
+       */
+             

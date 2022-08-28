@@ -21,25 +21,9 @@
 
 @implementation ViewController
 
-static const float (^stride)(void);
-static const float (^(^generator)(const float, const float, const int))(void) = ^ (const float start, const float stride, const int length) {
-    static float result;
-    result = start;
-    static float end;
-    end = start + (stride * length);
-    return ^ const float {
-        return (result = ((result += stride) < end) ? result : start);
-    };
-};
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
-    stride = generator(0.f, 1.f, 10);
-    printf("stride = %f\n", stride());
-    printf("stride = %f\n", stride());
-    
 
     bool (^(^audio_controller_ref)(audio_state_notification_handler))(void) = (*audio_controller_t)(audio_state_ref_init(audio_engine(audio_source(audio_renderer())), audio_session()));
     void (^toggle_play_pause_button)(void) = ^ (bool(^toggle_play_pause)(void), ...) {
