@@ -15,7 +15,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController <AVRoutePickerViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UIButton *playPauseButton;
 @property (weak, nonatomic) IBOutlet AVRoutePickerView *routePickerView;
