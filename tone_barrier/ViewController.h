@@ -23,7 +23,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, nonatomic) MPNowPlayingInfoCenter * nowPlayingInfoCenter;
 @property (strong, nonatomic) MPRemoteCommandCenter  * remoteCommandCenter;
 
-
 @end
 
 NS_ASSUME_NONNULL_END
