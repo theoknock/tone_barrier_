@@ -17,21 +17,13 @@
                         <rect key="frame" x="0.0" y="0.0" width="1366" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view opaque="NO" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="Pbz-Dt-iq7" customClass="AVRoutePickerView">
-                                <rect key="frame" x="641.5" y="890" width="83" height="114"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <color key="tintColor" systemColor="linkColor"/>
-                                <accessibility key="accessibilityConfiguration">
-                                    <accessibilityTraits key="traits" button="YES"/>
-                                </accessibility>
-                            </view>
                             <imageView opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.14999999999999999" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="waveform.path" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="Cet-hK-2QV" userLabel="Waveform Symbol">
                                 <rect key="frame" x="0.0" y="1" width="1366" height="1026"/>
                                 <color key="tintColor" systemColor="linkColor"/>
                                 <preferredSymbolConfiguration key="preferredSymbolConfiguration" weight="light"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" adjustsImageWhenHighlighted="NO" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Rav-Zl-4ee" userLabel="Play Pause Button">
-                                <rect key="frame" x="600" y="443" width="166.5" height="142.5"/>
+                                <rect key="frame" x="599.5" y="442.5" width="167" height="143"/>
                                 <accessibility key="accessibilityConfiguration">
                                     <accessibilityTraits key="traits" button="YES" playsSound="YES" updatesFrequently="YES" startsMediaSession="YES"/>
                                     <bool key="isElement" value="NO"/>
@@ -46,17 +38,43 @@
                                     <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="pointSize" pointSize="96" weight="light"/>
                                 </buttonConfiguration>
                             </button>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="speaker.wave.2.circle" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="Diq-1m-Pxd">
+                                <rect key="frame" x="0.0" y="967" width="36.5" height="36.5"/>
+                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="32" weight="ultraLight"/>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="headphones.circle" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="jng-SJ-dhI">
+                                <rect key="frame" x="36.5" y="967" width="36.5" height="36.5"/>
+                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="32" weight="ultraLight"/>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="applewatch.side.right" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="LHJ-GP-WmX">
+                                <rect key="frame" x="73" y="966.5" width="35" height="37"/>
+                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="32" weight="thin"/>
+                            </imageView>
+                            <view opaque="NO" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="Pbz-Dt-iq7" customClass="AVRoutePickerView">
+                                <rect key="frame" x="641.5" y="897" width="83.5" height="107"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="tintColor" systemColor="linkColor"/>
+                                <accessibility key="accessibilityConfiguration">
+                                    <accessibilityTraits key="traits" button="YES"/>
+                                </accessibility>
+                            </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="LHJ-GP-WmX" firstAttribute="leading" secondItem="jng-SJ-dhI" secondAttribute="trailing" id="0b7-Gk-f5K"/>
                             <constraint firstItem="Rav-Zl-4ee" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="2gt-7r-vEd"/>
                             <constraint firstItem="Cet-hK-2QV" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" id="2tf-4R-hIt"/>
+                            <constraint firstItem="Diq-1m-Pxd" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="4CM-ki-5PR"/>
                             <constraint firstItem="Cet-hK-2QV" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="6A8-qK-ILM"/>
+                            <constraint firstItem="LHJ-GP-WmX" firstAttribute="centerY" secondItem="Diq-1m-Pxd" secondAttribute="centerY" id="8tX-8e-upi"/>
                             <constraint firstItem="Pbz-Dt-iq7" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="Pka-4O-PLg"/>
+                            <constraint firstItem="jng-SJ-dhI" firstAttribute="centerY" secondItem="Diq-1m-Pxd" secondAttribute="centerY" id="U22-VF-LMr"/>
                             <constraint firstItem="Cet-hK-2QV" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="ZSt-qU-wXW"/>
+                            <constraint firstItem="jng-SJ-dhI" firstAttribute="leading" secondItem="Diq-1m-Pxd" secondAttribute="trailing" id="a1p-Jx-mm0"/>
                             <constraint firstItem="Cet-hK-2QV" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="apv-ua-uJN"/>
-                            <constraint firstItem="Pbz-Dt-iq7" firstAttribute="height" secondItem="Rav-Zl-4ee" secondAttribute="height" multiplier="0.8" id="bMd-Mb-fpl"/>
+                            <constraint firstItem="Pbz-Dt-iq7" firstAttribute="height" secondItem="Rav-Zl-4ee" secondAttribute="height" multiplier="0.75" id="bMd-Mb-fpl"/>
+                            <constraint firstItem="Diq-1m-Pxd" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="eLM-0o-aWj"/>
                             <constraint firstItem="Pbz-Dt-iq7" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="fV9-KM-be6"/>
                             <constraint firstItem="Rav-Zl-4ee" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="qfs-Yk-Hgv"/>
                             <constraint firstItem="Pbz-Dt-iq7" firstAttribute="width" secondItem="Rav-Zl-4ee" secondAttribute="width" multiplier="0.5" id="ysW-MG-5FD"/>
@@ -74,7 +92,10 @@
     </scenes>
     <color key="tintColor" systemColor="linkColor"/>
     <resources>
+        <image name="applewatch.side.right" catalog="system" width="123" height="128"/>
+        <image name="headphones.circle" catalog="system" width="128" height="123"/>
         <image name="play.circle" catalog="system" width="128" height="123"/>
+        <image name="speaker.wave.2.circle" catalog="system" width="128" height="123"/>
         <image name="waveform.path" catalog="system" width="128" height="113"/>
         <systemColor name="linkColor">
             <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

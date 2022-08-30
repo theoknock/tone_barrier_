@@ -23,6 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, nonatomic) MPNowPlayingInfoCenter * nowPlayingInfoCenter;
 @property (strong, nonatomic) MPRemoteCommandCenter  * remoteCommandCenter;
 
+typedef typeof(bool(^)(void)) toggle_audio;
++ (typeof(bool (^)(void)) _Nonnull (^)(const bool (^)(const bool))) audio_control;
 
 @end
 
