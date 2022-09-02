@@ -48,6 +48,7 @@ static typeof(bool (^)(void)) _Nonnull (^audio_control)(const bool (^)(const boo
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    audio_control control_audio = audio_controller(audio_engine(audio_source(audio_format(), audio_renderer())), audio_session());
     
     [self.routePickerView setDelegate:(id<AVRoutePickerViewDelegate> _Nullable)self];
     
