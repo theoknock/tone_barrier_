@@ -159,9 +159,17 @@ static AVAudioSession const * (^audio_session)(void) = ^ AVAudioSession const * 
                 }
             });
             
+            notification observe_audio_session_route_change_notification = audio_session_notification_observer([NSNotification notificationWithName:(NSNotificationName)AVAudioSessionRouteChangeNotification object:audio_session_ref], ^(NSNotification * notification) {
+                
+            });
+            
+            
             notification observe_audio_route_change_notification = audio_session_notification_observer([NSNotification notificationWithName:(NSNotificationName)AVAudioSessionRouteChangeNotification object:audio_session_ref], ^(NSNotification * notification) {
                 AVAudioSessionRouteDescription *routeDescription = [notification.userInfo valueForKey:AVAudioSessionRouteChangePreviousRouteKey];
+                //            NSLog(@"Previous route:\n");
+                //            NSLog(@"%@", routeDescription);
                 
+                //            NSLog(@"Route change:");
                 UInt8 reasonValue = [[notification.userInfo valueForKey:AVAudioSessionRouteChangeReasonKey] intValue];
                 AVAudioSessionPortDescription * output = [audio_session_ref.currentRoute.outputs firstObject];
                 switch (reasonValue) {
@@ -205,15 +213,19 @@ static AVAudioSession const * (^audio_session)(void) = ^ AVAudioSession const * 
 typedef typeof(const bool (^ __strong)(const bool)) audio_state_notification_handler;
 typedef const typeof(audio_state_notification_handler *) audio_state_notification_handler_t;
 typedef typeof(audio_state_notification_handler(^)(void)) audio_state_notification_handler_container;
+static audio_state_notification_handler (^(^ const __strong audio_state_notification_handler_container_ref)(audio_state_notification_handler))(void) = ^ (audio_state_notification_handler blk_ref) {
+    return ^ (audio_state_notification_handler_t retained_blk) {
+        return ^ audio_state_notification_handler {
+            Block_release(retained_blk);
+            return (audio_state_notification_handler)*retained_blk;
+        };
+    }(Block_copy(&blk_ref));
+};
+
 audio_state_notification_handler (^audio_state_notification_handlers)(audio_state_notification_handler, audio_state_notification_handler) = ^ (audio_state_notification_handler object_blk_a, audio_state_notification_handler object_blk_b) {
     return ^ bool (const bool b) {
         return object_blk_b(object_blk_a(b));
     };
-};
-
-
-audio_state state = ^ bool {
-    return [audio_engine_ref isRunning];
 };
 
 @interface ViewController ()
