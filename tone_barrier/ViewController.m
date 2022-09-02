@@ -22,9 +22,8 @@
 
 @implementation ViewController
 
-//@synthesize audio_control = _audio_control;
-static typeof(bool (^)(void)) _Nonnull (^audio_control)(const bool (^)(const bool)) = NULL;
-+ (typeof(bool (^)(void)) _Nonnull (^)(const bool (^)(const bool))) audio_control
+static typeof(toggle_audio) _Nonnull (^audio_control)(audio_state_notification_handler) = NULL;
++ (typeof(toggle_audio) _Nonnull (^)(audio_state_notification_handler)) audio_control
 {
     static dispatch_once_t onceSecurePredicate;
     dispatch_once(&onceSecurePredicate, ^{

@@ -24,7 +24,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, nonatomic) MPRemoteCommandCenter  * remoteCommandCenter;
 
 typedef typeof(bool(^)(void)) toggle_audio;
-+ (typeof(bool (^)(void)) _Nonnull (^)(const bool (^)(const bool))) audio_control;
+typedef typeof(const bool (^ __strong)(const bool)) audio_state_notification_handler;
+typedef const typeof(audio_state_notification_handler *) audio_state_notification_handler_t;
++ (typeof(toggle_audio) _Nonnull (^)(audio_state_notification_handler)) audio_control;
 
 @end
 
