@@ -37,19 +37,24 @@ static double (^scale)(double, double, double, double, double) = ^ double (doubl
     return val_new;
 };
 
+static double (^(^generate_normalized_random)(void))(void) = ^{
+    srand48((unsigned int)time(0));
+    static double random;
+    return ^ (double * random_t) {
+        return ^ double {
+            return (*random_t = (drand48()));
+        };
+    }(&random);
+};
 
-typedef typeof(double(^)(void)) random_n;
+typedef typeof(double(^)(void)) random_generator;
 typedef typeof(double(^(* restrict))(void)) random_n_t;
-static double (^(^(^(^random_generator)(double(^)(double)))(double(^)(double)))(double(^)(double)))(void) = ^ (double(^(randomizer))(double)) {
-    return ^ (double(^(distributor))(double)) {
-        srand48((unsigned int)time(0));
-        return ^ (double(^(feature_scaler))(double)) {
-            static double random;
-            return ^ (double * random_t) {
+static double (^(^(^(^generate_random)(double(^)(void)))(double(^)(double)))(double(^)(double)))(void) = ^ (double(^randomize)(void)) {
+    return ^ (double(^distribute)(double)) {
+        return ^ (double(^scale)(double)) {
                 return ^ double {
-                    return (feature_scaler)((distributor)((*random_t = (drand48()))));
+                    return scale(distribute(randomize()));
                 };
-            }(&random);
         };
     };
 };
@@ -67,12 +72,7 @@ static AVAudioFramePosition (^minimum)(AVAudioFramePosition, AVAudioFramePositio
     return y ^ ((x ^ y) & -(x < y));
 };
 
-static double (^note)(double) = ^ double (double coefficient) {
-    int c = round(coefficient);
-    double random_note = pow(2.f, c/12.f) * 440.f;
-    printf("random_note == %f\n", random_note);
-    return random_note;
-};
+
 
 static double (^(^(^signal_frequency)(double))(double *))(void) = ^ (double frequency) {
     static double sample_frequency;
@@ -144,71 +144,106 @@ typedef NS_ENUM(NSUInteger, TonalEnvelope) {
     TonalEnvelopeShortSustain
 };
 
+typedef NS_ENUM(unsigned int, MusicalNote) {
+    MusicalNoteA,
+    MusicalNoteBFlat,
+    MusicalNoteB,
+    MusicalNoteC,
+    MusicalNoteCSharp,
+    MusicalNoteD,
+    MusicalNoteDSharp,
+    MusicalNoteE,
+    MusicalNoteF,
+    MusicalNoteFSharp,
+    MusicalNoteG,
+    MusicalNoteAFlat
+};
+
+typedef NS_ENUM(unsigned int, MusicalNoteFrequency) {
+    MusicalNoteFrequencyA      = 440,
+    MusicalNoteFrequencyBFlat  = 466,
+    MusicalNoteFrequencyB      = 494,
+    MusicalNoteFrequencyC      = 523,
+    MusicalNoteFrequencyCSharp = 554,
+    MusicalNoteFrequencyD      = 587,
+    MusicalNoteFrequencyDSharp = 622,
+    MusicalNoteFrequencyE      = 659,
+    MusicalNoteFrequencyF      = 698,
+    MusicalNoteFrequencyFSharp = 740,
+    MusicalNoteFrequencyG      = 784,
+    MusicalNoteFrequencyAFlat  = 831
+};
+
+typedef struct __attribute__((objc_boxable)) MusicalNotes MusicalNotes;
+struct __attribute__((objc_boxable)) MusicalNotes
+{
+    MusicalNoteFrequency note_frequency[12];
+}  musical_note = { .note_frequency = { MusicalNoteFrequencyA, MusicalNoteFrequencyBFlat, MusicalNoteFrequencyB, MusicalNoteFrequencyC, MusicalNoteFrequencyCSharp, MusicalNoteFrequencyD, MusicalNoteFrequencyDSharp, MusicalNoteFrequencyE, MusicalNoteFrequencyF, MusicalNoteFrequencyFSharp, MusicalNoteFrequencyG, MusicalNoteFrequencyAFlat } };
+
 static unsigned int counter = 0;
 static double (^tonal_interval)(TonalInterval) = ^ double (TonalInterval interval) {
     double consonant_harmonic_interval_ratios [8] = {1.0, 2.0, 5.0/3.0, 4.0/3.0, 5.0/4.0, 6.0/5.0, (1.1 + drand48()), 5.0/4.0};
     return consonant_harmonic_interval_ratios[interval % TonalIntervalDefault];
 };
 
-static double (^(^tonal)(void))(double) = ^{
-    double(^random_tonal_interval)(void) = random_generator(^ double (double n) { return n; })(^ double (double n) { return n; })(^ double (double n) { return scale(n, TonalIntervalUnison, TonalIntervalDefault, 0.0, 1.0); });
-    double(^random_tonal_harmony)(void)  = random_generator(^ double (double n) { return (round(pow(n, 0.75))); })(^ double (double n) { return n; })(^ double (double n) { return scale(n, TonalHarmonyConsonance, TonalHarmonyRandom, 0.0, 1.0); });
-    return ^ (double root_frequency) {
-        TonalInterval interval = (random_tonal_harmony() == TonalHarmonyDissonance) ? TonalIntervalOffkey : random_tonal_interval();
-        double harmonic_frequency = root_frequency * interval;
-        return harmonic_frequency;
-    };
-};
+//static double (^(^tonal)(void))(double) = ^{
+//    double(^random_tonal_interval)(void) = random_generator(^ double (double n) { return n; })(^ double (double n) { return n; })(^ double (double n) { return scale(n, TonalIntervalUnison, TonalIntervalDefault, 0.0, 1.0); });
+//    double(^random_tonal_harmony)(void)  = random_generator(^ double (double n) { return (round(pow(n, 0.75))); })(^ double (double n) { return n; })(^ double (double n) { return scale(n, TonalHarmonyConsonance, TonalHarmonyRandom, 0.0, 1.0); });
+//    return ^ (double root_frequency) {
+//        TonalInterval interval = (random_tonal_harmony() == TonalHarmonyDissonance) ? TonalIntervalOffkey : random_tonal_interval();
+//        double harmonic_frequency = root_frequency * interval;
+//        return harmonic_frequency;
+//    };
+//};
 
-static AVAudioPCMBuffer * audio_buffer_ref = NULL;
-static AVAudioPCMBuffer * (^audio_buffer)(void) = ^ AVAudioPCMBuffer * {
-    static int note_c;
-    static int * note_ct = &note_c;
-    random_n r = random_generator(^ double (double n) { return n; })(^ double (double n) { return n; })(^ double (double n) { return scale(n, 0, 12, 0.0, 1.0); });
-    double(^t)(double) = tonal();
-    const Float32 sampleRate = 48000.f;
-    const Float32 amplitude = 0.25f;
-    const Float32 M_PI_SQR = 2.f * M_PI;
-    Float32 (^phase_channel_l)(AVAudioFrameCount) = ^(AVAudioFrameCount split_frame) {
-        __block Float32 theta_increment_t = (M_PI_SQR * 440.f / sampleRate);
-        return ^ (AVAudioFrameCount frame) {
-            if ((frame = frame % 50) == split_frame) (theta_increment_t = (M_PI_SQR * note((*note_ct)) / sampleRate));
+typedef typeof(AVAudioPCMBuffer * (^)(void)) audio_buffer_ref;
+audio_buffer_ref (^audio_buffer)(AVAudioFormat *) = ^ (AVAudioFormat * buffer_format) {
+    return ^ AVAudioPCMBuffer * {
+        static AVAudioPCMBuffer * audio_buffer_ref;
+        static int note_c;
+        static int * note_ct = &note_c;
+        random_generator random_musical_note_generator = generate_random(generate_normalized_random())(^ double (double n) { return n; })(^ double (double n) { return pow(2.f, round(scale(n, MusicalNoteA, MusicalNoteAFlat, 0.0, 1.0))/12.f) * 440.f; });
+        printf("frequency == %f", random_musical_note_generator());
+        //    double(^t)(double) = tonal();
+        const Float32 sampleRate = buffer_format.sampleRate;
+        const Float32 amplitude = 0.25f;
+        const Float32 M_PI_SQR = 2.f * M_PI;
+        Float32 (^phase_channel_l)(AVAudioFrameCount) = ^(Float32 theta_increment_t) {
             static Float32 theta;
-            !((theta += theta_increment_t) > M_PI_SQR) ?: (theta -= M_PI_SQR);
-            return sinf(theta);
-        };
-    }(50);
-    
-    Float32 (^phase_channel_r)(AVAudioFrameCount) = ^(AVAudioFrameCount split_frame) {
-        __block Float32 theta_increment_t = (M_PI_SQR * 880.f / sampleRate); // tonal(note()) is wrong; use root_frequency generated by note() on the other channel
-        return ^ (AVAudioFrameCount frame) {
-            if ((frame = frame % 50) == split_frame) (theta_increment_t = (M_PI_SQR * note((*note_ct)++) / sampleRate));
+            return ^ (AVAudioFrameCount frame) {
+                !((theta += theta_increment_t) > M_PI_SQR) ?: (theta -= M_PI_SQR);
+                return sinf(theta);
+            };
+        }((M_PI_SQR * random_musical_note_generator() / sampleRate));
+        
+        Float32 (^phase_channel_r)(AVAudioFrameCount) = ^(Float32 theta_increment_t) {
             static Float32 theta;
-            !((theta += theta_increment_t) > M_PI_SQR) ?: (theta -= M_PI_SQR);
-            return sinf(theta);
-        };
-    }(50);
-    
-    
-   AVAudioFrameCount frame = 0;
+            return ^ (AVAudioFrameCount frame) {
+                !((theta += theta_increment_t) > M_PI_SQR) ?: (theta -= M_PI_SQR);
+                return sinf(theta);
+            };
+        }((M_PI_SQR * random_musical_note_generator() / sampleRate));
+        
+        
+        AVAudioFrameCount frame = 0;
         AVAudioFrameCount * frame_t = &frame;
         static int counter = 0;
-//        for (; *frame_t < frameCount; (*frame_t = -~(*frame_t))) {
-    AVAudioFrameCount frameCount = audio_format_ref.sampleRate * 2.0;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        audio_buffer_ref = [[AVAudioPCMBuffer alloc] initWithPCMFormat:audio_format_ref frameCapacity:frameCount];
-    });
-    audio_buffer_ref.frameLength = frameCount;
-    float *left_channel  = audio_buffer_ref.floatChannelData[0];
-    float *right_channel = (audio_format_ref.channelCount == 2) ? audio_buffer_ref.floatChannelData[1] : nil;
-    
-        for (frame = 0; frame < frameCount; frame++) {
-            /*((Float32 *)((pcmBuffer.floatChannelData + 0)) + frame)*/*left_channel = (Float32)phase_channel_l(counter) * amplitude;
-            /**((Float32 *)((pcmBuffer.floatChannelData + 1)) + frame)*/ *right_channel = (Float32)phase_channel_r(counter) * amplitude;
+        AVAudioFrameCount frameCount = buffer_format.sampleRate * 2.0;
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            audio_buffer_ref = [[AVAudioPCMBuffer alloc] initWithPCMFormat:buffer_format frameCapacity:frameCount];
+        });
+        audio_buffer_ref.frameLength = frameCount;
+        float *left_channel  = audio_buffer_ref.floatChannelData[0];
+        float *right_channel = (buffer_format.channelCount == 2) ? audio_buffer_ref.floatChannelData[1] : nil;
+        
+        for (; *frame_t < frameCount; (*frame_t = -~(*frame_t))) {
+            /*((Float32 *)((pcmBuffer.floatChannelData + 0)) + frame)*/left_channel[*frame_t] = (Float32)phase_channel_l(*frame_t) * 1.0;
+            /**((Float32 *)((pcmBuffer.floatChannelData + 1)) + frame)*/ right_channel[*frame_t] = (Float32)phase_channel_r(*frame_t) * 1.0;
         }
- 
-    return audio_buffer_ref;
+        
+        return audio_buffer_ref;
+    };
 };
 
 @interface ViewController ()

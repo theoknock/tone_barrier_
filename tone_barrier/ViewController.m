@@ -37,7 +37,7 @@ static typeof(toggle_audio) _Nonnull (^audio_control)(audio_state_notification_h
                         return (*object_composition_t)((audio_engine_ref.isRunning));//((![audio_engine isRunning])  && [audio_session setActive:[audio_engine startAndReturnError:&error] error:&error] && !error) || (^ bool { [audio_engine stop]; __autoreleasing NSError * error = nil; return ![audio_session setActive:[audio_engine isRunning] error:&error]; }()));
                     };
                 };
-            }(audio_engine(audio_source(audio_format(), audio_renderer()), player_node(), mixer_node()), audio_session());
+            }(audio_engine(player_node()), audio_session());
     });
     
     return audio_control;
@@ -59,7 +59,7 @@ static typeof(toggle_audio) _Nonnull (^audio_control)(audio_state_notification_h
             //            ([audio_engine_ref isRunning] && ![player_node() isPlaying]) ? ^{ [player_node() play]; }() : ^{ [player_node() pause]; }();
             static void (^play_audio_buffer)(void);
             (play_audio_buffer = ^{
-                [player_node_ref scheduleBuffer:audio_buffer() completionCallbackType:AVAudioPlayerNodeCompletionDataPlayedBack completionHandler:^(AVAudioPlayerNodeCompletionCallbackType callbackType) {
+                [player_node_ref scheduleBuffer:audio_buffer(audio_format())() completionCallbackType:AVAudioPlayerNodeCompletionDataPlayedBack completionHandler:^(AVAudioPlayerNodeCompletionCallbackType callbackType) {
                    printf("play_audio_buffer()\n");
 //                    play_audio_buffer();
                     !(audio_engine_ref.isRunning) ?: play_audio_buffer();
@@ -68,7 +68,7 @@ static typeof(toggle_audio) _Nonnull (^audio_control)(audio_state_notification_h
             play_audio_buffer();
             printf("\t\tplayer_node playing state is %s (%s)(%s)\n", (player_node_ref.isPlaying) ? "TRUE" : "FALSE", (audio_engine_ref.isRunning) ? "TRUE" : "FALSE", (b) ? "TRUE" : "FALSE");
             
-            return (audio_engine_ref.isRunning);
+            return (player_node_ref.isPlaying);
         });
         
     }((id)player_node_ref);
