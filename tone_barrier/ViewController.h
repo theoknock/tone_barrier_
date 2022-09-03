@@ -15,13 +15,16 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+static AVAudioFormat * audio_format_ref = NULL;
+static AVAudioPlayerNode * player_node_ref = NULL;
+
 @interface ViewController : UIViewController <AVRoutePickerViewDelegate>
 
-@property (weak, nonatomic) IBOutlet UIButton *playPauseButton;
-@property (weak, nonatomic) IBOutlet AVRoutePickerView *routePickerView;
+@property (weak, nonatomic) IBOutlet UIButton * playPauseButton;
+@property (weak, nonatomic) IBOutlet AVRoutePickerView * routePickerView;
 
-//+ (nonnull MPNowPlayingInfoCenter *)nowPlayingInfoCenter;
-//+ (nonnull MPRemoteCommandCenter  *)remoteCommandCenter;
+@property (strong, nonatomic) MPNowPlayingInfoCenter * nowPlayingInfoCenter;
+@property (strong, nonatomic) MPRemoteCommandCenter  * remoteCommandCenter;
 
 typedef typeof(bool(^)(void)) toggle_audio;
 typedef typeof(const bool (^ __strong)(const bool)) audio_state_notification_handler;

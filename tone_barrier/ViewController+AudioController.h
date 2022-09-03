@@ -62,7 +62,6 @@ static AVAudioSourceNodeRenderBlock (^audio_renderer)(void) = ^ AVAudioSourceNod
     };
 };
 
-static AVAudioFormat * audio_format_ref = NULL;
 static AVAudioFormat * (^audio_format)(void) = ^ AVAudioFormat * {
     static dispatch_once_t onceSecurePredicate;
     dispatch_once(&onceSecurePredicate, ^{
@@ -71,8 +70,8 @@ static AVAudioFormat * (^audio_format)(void) = ^ AVAudioFormat * {
     return audio_format_ref;
 };
 
-static AVAudioSourceNode const * audio_source_ref = NULL;
-static AVAudioSourceNode const * (^audio_source)(AVAudioFormat *, AVAudioSourceNodeRenderBlock) = ^ AVAudioSourceNode const * (AVAudioFormat * audio_format, AVAudioSourceNodeRenderBlock audio_renderer) {
+static AVAudioSourceNode * audio_source_ref = NULL;
+static AVAudioSourceNode * (^audio_source)(AVAudioFormat *, AVAudioSourceNodeRenderBlock) = ^ AVAudioSourceNode const * (AVAudioFormat * audio_format, AVAudioSourceNodeRenderBlock audio_renderer) {
     static dispatch_once_t onceSecurePredicate;
     dispatch_once(&onceSecurePredicate, ^{
         audio_source_ref = [[AVAudioSourceNode alloc] initWithFormat:audio_format renderBlock:audio_renderer];
@@ -80,8 +79,7 @@ static AVAudioSourceNode const * (^audio_source)(AVAudioFormat *, AVAudioSourceN
     return audio_source_ref;
 };
 
-static AVAudioPlayerNode const * player_node_ref = NULL;
-static AVAudioPlayerNode const * (^player_node)(void) = ^ AVAudioPlayerNode const * {
+static AVAudioPlayerNode * (^player_node)(void) = ^ AVAudioPlayerNode * {
     static dispatch_once_t onceSecurePredicate;
     dispatch_once(&onceSecurePredicate, ^{
         player_node_ref = [[AVAudioPlayerNode alloc] init];
@@ -110,9 +108,23 @@ static AVAudioPlayerNode const * (^player_node)(void) = ^ AVAudioPlayerNode cons
      }]
  */
 
-// _mixerNode = [[AVAudioMixerNode alloc] init];
+typedef typeof(void **(^)(void)) object_container;
+static object_container(^(^(^audio_object)(void **))(void(^)(void **)))(void) = ^ (void ** object) {
+    return ^ (void(^object_initializer)(void **)) {
+        //        static dispatch_once_t onceSecurePredicate;
+        //        dispatch_once(&onceSecurePredicate, ^{
+        object_initializer((void **)object);
+        //        });
+        
+        return ^{
+            return ^ void ** {
+                return object;
+            };
+        };
+    };
+};
 
-static AVAudioMixerNode const * mixer_node_ref = NULL;
+static AVAudioMixerNode * mixer_node_ref = NULL;
 static AVAudioMixerNode const * (^mixer_node)(void) = ^ AVAudioMixerNode const * {
     static dispatch_once_t onceSecurePredicate;
     dispatch_once(&onceSecurePredicate, ^{
@@ -121,17 +133,19 @@ static AVAudioMixerNode const * (^mixer_node)(void) = ^ AVAudioMixerNode const *
     return mixer_node_ref;
 };
 
+
+
 static AVAudioEngine const * audio_engine_ref = NULL;
-static AVAudioEngine const * (^audio_engine)(AVAudioSourceNode *, AVAudioPlayerNode *, AVAudioMixerNode *) = ^(AVAudioSourceNode * audio_source, AVAudioPlayerNode * player_node, AVAudioMixerNode * mixer_node) {
+static AVAudioEngine const * (^audio_engine)(AVAudioSourceNode * _Nullable, AVAudioPlayerNode * _Nullable, AVAudioMixerNode * _Nullable) = ^(AVAudioSourceNode * _Nullable audio_source, AVAudioPlayerNode * _Nullable player_node, AVAudioMixerNode * _Nullable mixer_node) {
     static dispatch_once_t onceSecurePredicate;
     dispatch_once(&onceSecurePredicate, ^{
         audio_engine_ref = [[AVAudioEngine alloc] init];
-        [audio_engine_ref attachNode:audio_source];
+//        [audio_engine_ref attachNode:audio_source];
         [audio_engine_ref attachNode:player_node];
-        [audio_engine_ref attachNode:mixer_node];
-        [audio_engine_ref connect:audio_source to:mixer_node format:[audio_engine_ref.mainMixerNode outputFormatForBus:(AVAudioNodeBus)0]];
-        [audio_engine_ref connect:player_node to:mixer_node format:[audio_engine_ref.mainMixerNode outputFormatForBus:(AVAudioNodeBus)0]];
-        [audio_engine_ref connect:mixer_node to:audio_engine_ref.mainMixerNode format:[audio_engine_ref.mainMixerNode outputFormatForBus:(AVAudioNodeBus)0]];
+//        [audio_engine_ref attachNode:mixer_node];
+//        [audio_engine_ref connect:audio_source to:audio_engine_ref.mainMixerNode format:[audio_engine_ref.mainMixerNode outputFormatForBus:(AVAudioNodeBus)0]];
+        [audio_engine_ref connect:player_node to:audio_engine_ref.mainMixerNode format:[audio_engine_ref.mainMixerNode outputFormatForBus:(AVAudioNodeBus)0]];
+//        [audio_engine_ref connect:mixer_node to:audio_engine_ref.mainMixerNode format:[audio_engine_ref.mainMixerNode outputFormatForBus:(AVAudioNodeBus)0]];
     });
     return audio_engine_ref;
 };
