@@ -34,9 +34,7 @@ static typeof(toggle_audio) _Nonnull (^audio_control)(audio_state_notification_h
                     *object_composition_t = audio_state_notification_handlers(object, *object_composition_t);
                     return ^ bool {
                         __autoreleasing NSError * error = nil;
-                        
-                        //            (![audio_engine isRunning]) ^ ([audio_engine startAndReturnError:nil] ^ ![audio_engine isRunning]);
-                        return ((*object_composition_t)((![audio_engine isRunning])  && [audio_session setActive:[audio_engine startAndReturnError:&error] error:&error] && !error) || (^ bool { [audio_engine stop]; __autoreleasing NSError * error = nil; return ![audio_session setActive:[audio_engine isRunning] error:&error]; }()));
+                        return (*object_composition_t)(^ bool { (audio_engine_ref.isRunning & player_node_ref.isPlaying) ? ^{ [player_node_ref pause]; [audio_engine_ref pause];}() : ^{ [audio_engine_ref startAndReturnError:nil]; [player_node_ref play]; }(); return audio_engine_ref.isRunning & player_node_ref.isPlaying; }());//((![audio_engine isRunning])  && [audio_session setActive:[audio_engine startAndReturnError:&error] error:&error] && !error) || (^ bool { [audio_engine stop]; __autoreleasing NSError * error = nil; return ![audio_session setActive:[audio_engine isRunning] error:&error]; }()));
                     };
                 };
             }(audio_engine(audio_source(audio_format(), audio_renderer()), player_node(), mixer_node()), audio_session());
@@ -51,27 +49,37 @@ static typeof(toggle_audio) _Nonnull (^audio_control)(audio_state_notification_h
     
     [self.routePickerView setDelegate:(id<AVRoutePickerViewDelegate> _Nullable)self];
     
-    ^ (bool(^toggle_play_pause)(void), ...) {
+    ^ (id obj, ...) {
         va_list argp;
-        va_start(argp, toggle_play_pause);
+        va_start(argp, obj);
         
-        AVAudioPlayerNode * player_node = va_arg(argp, AVAudioPlayerNode *);
-        
-    }(ViewController.audio_control(^ (AVAudioPlayerNode * player_node) {
-        return ^ bool (const bool b) {
-            (b) ? ^{ [player_node play]; }() : ^{ [player_node stop]; }();
-            printf("player_node playing state is %s\n", ([player_node isPlaying]) ? "TRUE" : "FALSE");
-            return b;
-        };
-    }(player_node_ref)), player_node_ref);
-    ^ (bool(^toggle_play_pause)(void), ...) {
-        va_list argp;
-        va_start(argp, toggle_play_pause);
+//        AVAudioPlayerNode * player_node = va_arg(argp, AVAudioPlayerNode *);
 
+        ViewController.audio_control(^ bool (const bool b) {
+            //            ([audio_engine_ref isRunning] && ![player_node() isPlaying]) ? ^{ [player_node() play]; }() : ^{ [player_node() pause]; }();
+            static void (^play_audio_buffer)(void);
+            (play_audio_buffer = ^{
+                [player_node_ref scheduleBuffer:audio_buffer() completionHandler:^{
+                    printf("play_audio_buffer()\n");
+                    !(audio_engine_ref.isRunning && player_node_ref.isPlaying) ?: play_audio_buffer();
+                }];
+            })();
+            !(audio_engine_ref.isRunning && player_node_ref.isPlaying) ?: play_audio_buffer();
+            printf("\t\tplayer_node playing state is %s (%s)(%s)\n", ([player_node() isPlaying]) ? "TRUE" : "FALSE", ([audio_engine_ref isRunning]) ? "TRUE" : "FALSE", (b) ? "TRUE" : "FALSE");
+            
+            return ([(AVAudioPlayerNode *)obj isPlaying] == b);
+        });
+        
+    }((id)player_node_ref);
+    
+    ^ (bool(^toggle_play_pause)(void), ...) {
+        va_list argp;
+        va_start(argp, toggle_play_pause);
+        
         UIButton * play_pause_button = va_arg(argp, UIButton *);
-
-    [play_pause_button setImage:[UIImage systemImageNamed:@"pause.circle"] forState:UIControlStateSelected];
-    [play_pause_button setImage:[UIImage systemImageNamed:@"play.circle"]  forState:UIControlStateNormal];
+        
+        [play_pause_button setImage:[UIImage systemImageNamed:@"pause.circle"] forState:UIControlStateSelected];
+        [play_pause_button setImage:[UIImage systemImageNamed:@"play.circle"]  forState:UIControlStateNormal];
     [play_pause_button setImage:[UIImage systemImageNamed:@"play.slash"]   forState:UIControlStateDisabled];
     
     objc_setAssociatedObject(play_pause_button, @selector(invoke), toggle_play_pause, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
@@ -81,8 +89,7 @@ static typeof(toggle_audio) _Nonnull (^audio_control)(audio_state_notification_h
             dispatch_async(dispatch_get_main_queue(), ^{
                 [play_pause_button setSelected:b];
             });
-            printf("audio engine/session selected state set to %s\n", (b) ? "TRUE" : "FALSE");
-            printf("toggle_play_pause_button selected state set to %s\n", (b) ? "TRUE" : "FALSE");
+            printf("toggle_play_pause_button selected state set to %s (%s)\n", (play_pause_button.isSelected) ? "TRUE" : "FALSE", ([audio_engine_ref isRunning]) ? "TRUE" : "FALSE");
             return b;
         };
     }(_playPauseButton)), _playPauseButton);
@@ -91,10 +98,10 @@ static typeof(toggle_audio) _Nonnull (^audio_control)(audio_state_notification_h
         va_list argp;
         va_start(argp, toggle_play_pause);
         
-        UIButton * play_pause_button = va_arg(argp, UIButton *);
+//        UIButton * play_pause_button = va_arg(argp, UIButton *);
         
-        static MPNowPlayingInfoCenter * nowPlayingInfoCenter;// = va_arg(argp, MPNowPlayingInfoCenter *);
-        static MPRemoteCommandCenter  * remoteCommandCenter;//  = va_arg(argp, MPRemoteCommandCenter  *);
+        MPNowPlayingInfoCenter * nowPlayingInfoCenter = va_arg(argp, MPNowPlayingInfoCenter *);
+        MPRemoteCommandCenter  * remoteCommandCenter  = va_arg(argp, MPRemoteCommandCenter  *);
         
         NSMutableDictionary<NSString *, id> * nowPlayingInfo = [[NSMutableDictionary alloc] initWithCapacity:4];
         [nowPlayingInfo setObject:@"ToneBarrier" forKey:MPMediaItemPropertyTitle];
@@ -127,7 +134,7 @@ static typeof(toggle_audio) _Nonnull (^audio_control)(audio_state_notification_h
         printf("MPNowPlayingInfoCenter playback state set to %lu\n", (unsigned long)[[MPNowPlayingInfoCenter defaultCenter] playbackState]);
         (b) ? [[UIApplication sharedApplication] beginReceivingRemoteControlEvents] : [[UIApplication sharedApplication] endReceivingRemoteControlEvents];
         return b;
-    }), _playPauseButton);
+    }), _nowPlayingInfoCenter, _remoteCommandCenter);
 }
 
 @end
