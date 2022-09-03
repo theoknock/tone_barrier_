@@ -20,8 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak, nonatomic) IBOutlet UIButton *playPauseButton;
 @property (weak, nonatomic) IBOutlet AVRoutePickerView *routePickerView;
 
-@property (strong, nonatomic) MPNowPlayingInfoCenter * nowPlayingInfoCenter;
-@property (strong, nonatomic) MPRemoteCommandCenter  * remoteCommandCenter;
+//+ (nonnull MPNowPlayingInfoCenter *)nowPlayingInfoCenter;
+//+ (nonnull MPRemoteCommandCenter  *)remoteCommandCenter;
 
 typedef typeof(bool(^)(void)) toggle_audio;
 typedef typeof(const bool (^ __strong)(const bool)) audio_state_notification_handler;

@@ -62,8 +62,8 @@ static AVAudioSourceNodeRenderBlock (^audio_renderer)(void) = ^ AVAudioSourceNod
     };
 };
 
-static AVAudioFormat const * audio_format_ref = NULL;
-static AVAudioFormat const * (^audio_format)(void) = ^ AVAudioFormat const * {
+static AVAudioFormat * audio_format_ref = NULL;
+static AVAudioFormat * (^audio_format)(void) = ^ AVAudioFormat * {
     static dispatch_once_t onceSecurePredicate;
     dispatch_once(&onceSecurePredicate, ^{
         audio_format_ref = [[AVAudioFormat alloc] initStandardFormatWithSampleRate:48000.f channels:(AVAudioChannelCount)2];
@@ -71,8 +71,8 @@ static AVAudioFormat const * (^audio_format)(void) = ^ AVAudioFormat const * {
     return audio_format_ref;
 };
 
-static AVAudioSourceNode const * audio_source_ref = NULL;
-static AVAudioSourceNode const * (^audio_source)(AVAudioFormat *, AVAudioSourceNodeRenderBlock) = ^ AVAudioSourceNode const * (AVAudioFormat * audio_format, AVAudioSourceNodeRenderBlock audio_renderer) {
+static AVAudioSourceNode * audio_source_ref = NULL;
+static AVAudioSourceNode * (^audio_source)(AVAudioFormat *, AVAudioSourceNodeRenderBlock) = ^ AVAudioSourceNode * (AVAudioFormat * audio_format, AVAudioSourceNodeRenderBlock audio_renderer) {
     static dispatch_once_t onceSecurePredicate;
     dispatch_once(&onceSecurePredicate, ^{
         audio_source_ref = [[AVAudioSourceNode alloc] initWithFormat:audio_format renderBlock:audio_renderer];
@@ -158,46 +158,34 @@ static AVAudioSession const * (^audio_session)(void) = ^ AVAudioSession const * 
                         break;
                 }
             });
-            
-            notification observe_audio_session_route_change_notification = audio_session_notification_observer([NSNotification notificationWithName:(NSNotificationName)AVAudioSessionRouteChangeNotification object:audio_session_ref], ^(NSNotification * notification) {
-                
-            });
-            
-            
+
             notification observe_audio_route_change_notification = audio_session_notification_observer([NSNotification notificationWithName:(NSNotificationName)AVAudioSessionRouteChangeNotification object:audio_session_ref], ^(NSNotification * notification) {
-                AVAudioSessionRouteDescription *routeDescription = [notification.userInfo valueForKey:AVAudioSessionRouteChangePreviousRouteKey];
-                //            NSLog(@"Previous route:\n");
-                //            NSLog(@"%@", routeDescription);
-                
-                //            NSLog(@"Route change:");
-                UInt8 reasonValue = [[notification.userInfo valueForKey:AVAudioSessionRouteChangeReasonKey] intValue];
+                AVAudioSessionRouteDescription * routeDescription = [notification.userInfo valueForKey:AVAudioSessionRouteChangePreviousRouteKey];
                 AVAudioSessionPortDescription * output = [audio_session_ref.currentRoute.outputs firstObject];
+                UInt8 reasonValue = [[notification.userInfo valueForKey:AVAudioSessionRouteChangeReasonKey] intValue];
                 switch (reasonValue) {
                     case AVAudioSessionRouteChangeReasonNewDeviceAvailable || AVAudioSessionRouteChangeReasonOldDeviceUnavailable: {
-                        
                         if (output.portType == AVAudioSessionPortHeadphones) {
-                            printf("\nheadphones\n");
+                            printf("\nAVAudioSessionRouteDescription.AVAudioSessionPortHeadphones == %s\n", [[routeDescription description] UTF8String]);
                         }
                         break;
                     }
-                    case AVAudioSessionRouteChangeReasonOldDeviceUnavailable:
-                        //                    NSLog(@"     OldDeviceUnavailable");
-                        //                    break;
-                    case AVAudioSessionRouteChangeReasonCategoryChange:
-                        //                    NSLog(@"     CategoryChange");
-                        //                    NSLog(@"     New Category: %@", [[AVAudioSession sharedInstance] category]);
+                    case AVAudioSessionRouteChangeReasonOldDeviceUnavailable: {
                         break;
-                    case AVAudioSessionRouteChangeReasonOverride:
-                        //                    NSLog(@"     Override");
+                    }
+                    case AVAudioSessionRouteChangeReasonCategoryChange: {
                         break;
-                    case AVAudioSessionRouteChangeReasonWakeFromSleep:
-                        //                    NSLog(@"     WakeFromSleep");
+                    }
+                    case AVAudioSessionRouteChangeReasonOverride: {
                         break;
-                    case AVAudioSessionRouteChangeReasonNoSuitableRouteForCategory:
-                        //                    NSLog(@"     NoSuitableRouteForCategory");
+                    }
+                    case AVAudioSessionRouteChangeReasonWakeFromSleep: {
                         break;
+                    }
+                    case AVAudioSessionRouteChangeReasonNoSuitableRouteForCategory: {
+                        break;
+                    }
                     default: ;
-                        //                    NSLog(@"     ReasonUnknown");
                 }
                 
                 
