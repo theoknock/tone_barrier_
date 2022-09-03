@@ -34,11 +34,12 @@ static typeof(toggle_audio) _Nonnull (^audio_control)(audio_state_notification_h
                     *object_composition_t = audio_state_notification_handlers(object, *object_composition_t);
                     return ^ bool {
                         __autoreleasing NSError * error = nil;
+                        
                         //            (![audio_engine isRunning]) ^ ([audio_engine startAndReturnError:nil] ^ ![audio_engine isRunning]);
                         return ((*object_composition_t)((![audio_engine isRunning])  && [audio_session setActive:[audio_engine startAndReturnError:&error] error:&error] && !error) || (^ bool { [audio_engine stop]; __autoreleasing NSError * error = nil; return ![audio_session setActive:[audio_engine isRunning] error:&error]; }()));
                     };
                 };
-            }(audio_engine(audio_source(audio_format(), audio_renderer())), audio_session());
+            }(audio_engine(audio_source(audio_format(), audio_renderer()), player_node(), mixer_node()), audio_session());
     });
     
     return audio_control;
@@ -50,6 +51,19 @@ static typeof(toggle_audio) _Nonnull (^audio_control)(audio_state_notification_h
     
     [self.routePickerView setDelegate:(id<AVRoutePickerViewDelegate> _Nullable)self];
     
+    ^ (bool(^toggle_play_pause)(void), ...) {
+        va_list argp;
+        va_start(argp, toggle_play_pause);
+        
+        AVAudioPlayerNode * player_node = va_arg(argp, AVAudioPlayerNode *);
+        
+    }(ViewController.audio_control(^ (AVAudioPlayerNode * player_node) {
+        return ^ bool (const bool b) {
+            (b) ? ^{ [player_node play]; }() : ^{ [player_node stop]; }();
+            printf("player_node playing state is %s\n", ([player_node isPlaying]) ? "TRUE" : "FALSE");
+            return b;
+        };
+    }(player_node_ref)), player_node_ref);
     ^ (bool(^toggle_play_pause)(void), ...) {
         va_list argp;
         va_start(argp, toggle_play_pause);
